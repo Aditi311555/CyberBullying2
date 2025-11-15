@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyberbullying Detection</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        background: #fafafa;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+
+      .page {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 40px;
+        gap: 40px;
+      }
+
+      .left,
+      .right {
+        border-radius: 8px;
+        border: 1px solid #dbdbdb;
+        overflow: hidden;
+      }
+
+      .left {
+        width: 480px;
+        height: 600px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #ebebeb;
+      }
+
+      .left img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .right {
+        width: 480px;
+        height: 600px;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .comments-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 20px;
+      }
+
+      .comment {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .pfp {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-image: url("https://i.pravatar.cc/150?img=12");
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+      }
+
+      .uname {
+        font-weight: 600;
+        font-size: 14px;
+        display: block;
+      }
+
+      .txt {
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .bottom-box {
+        padding: 10px 14px;
+        border-top: 1px solid #dbdbdb;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: #f9f9f9;
+      }
+
+      textarea {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        resize: none;
+        flex: 1;
+        font-size: 14px;
+        padding: 8px;
+        outline: none;
+      }
+
+      button {
+        border: none;
+        background: #007bff;
+        color: white;
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      button:hover:not(:disabled) {
+        background: #0056b3;
+      }
+
+      .alert-box {
+        margin: 10px 0;
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-weight: bold;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .success {
+        background: #20bf6b;
+        color: white;
+      }
+      .warning {
+        background: #ed4c67;
+        color: white;
+      }
+      .blocked {
+        background: black;
+        color: white;
+      }
+
+      /* Audio Upload Styling */
+      .audio-upload {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        border: 2px dashed #007bff;
+        border-radius: 8px;
+        background: #f0f8ff;
+        cursor: pointer;
+        font-size: 14px;
+        color: #007bff;
+        transition: background 0.2s, border-color 0.2s;
+        text-align: center;
+        gap: 8px;
+      }
+
+      .audio-upload:hover {
+        background: #e6f0ff;
+        border-color: #0056b3;
+      }
+
+      .audio-upload input[type="file"] {
+        display: none;
+      }
+
+      .file-name {
+        font-size: 13px;
+        color: #333;
+      }
+
+      /* Scrollbar for comments */
+      .comments-area::-webkit-scrollbar {
+        width: 6px;
+      }
+      .comments-area::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <!-- Left Image -->
+      <div class="left">
+        <img
+          src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1000"
+          alt="Cyberbullying illustration"
+        />
+      </div>
+
+      <!-- Right Comments Section -->
+      <div class="right">
+        <div class="comments-area">
+          <div class="comment">
+            <div class="pfp"></div>
+            <div>
+              <span class="uname">username</span>
+              <span class="txt"
+                >This model detects cyberbullying comments below.</span
+              >
+            </div>
+          </div>
+
+          {% if message %}
+          <div
+            class="alert-box {% if prediction == 0 %}success{% elif prediction == 1 %}warning{% elif prediction == 'BLOCKED' %}blocked{% endif %}"
+          >
+            {{ message }}
+          </div>
+          {% endif %} {% for c in comments %}
+          <div class="comment">
+            <div class="pfp"></div>
+            <div>
+              <span class="uname">you</span>
+              <span class="txt">{{ c.comment }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if prediction != 'BLOCKED' %}
+
+        <!-- TEXT COMMENT FORM -->
+        <!--<form method="POST" class="bottom-box">
+          <div class="pfp"></div>
+          <textarea
+            name="text"
+            placeholder="Add a comment..."
+            oninput="this.nextElementSibling.disabled = (this.value.trim()==='')"
+          ></textarea>
+          <button type="submit" disabled>Post</button>
+        </form>-->
+
+        <!-- AUDIO COMMENT FORM -->
+        <form method="POST" class="bottom-box" enctype="multipart/form-data">
+          <div class="pfp"></div>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 8px">
+            <textarea name="text" placeholder="Add a comment..."></textarea>
+
+            <label class="audio-upload">
+              🎤 Drag & Drop or Click to Upload Audio
+              <input
+                type="file"
+                name="audio"
+                accept="audio/*"
+                onchange="this.nextElementSibling.innerText=this.files[0]?.name||''"
+              />
+              <span class="file-name"></span>
+            </label>
+
+            <button type="submit">Post</button>
+          </div>
+        </form>
+
+        {% else %}
+        <div class="alert-box blocked">
+          You cannot post anymore. Your account is blocked.
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <script>
+      // Display selected file name in audio upload box
+      document
+        .querySelectorAll('.audio-upload input[type="file"]')
+        .forEach((input) => {
+          input.addEventListener("change", (e) => {
+            const fileName = e.target.files[0]?.name || "";
+            e.target.nextElementSibling.innerText = fileName;
+          });
+        });
+    </script>
+  </body>
+</html>

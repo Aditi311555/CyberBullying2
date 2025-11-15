@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        background: #f0f2f5;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .login-container {
+        max-width: 420px;
+        margin: 70px auto;
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 25px;
+      }
+
+      .form-control {
+        padding: 10px;
+        border-radius: 10px;
+      }
+
+      .btn-custom {
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .small-text {
+        text-align: center;
+        margin-top: 15px;
+      }
+
+      .error-msg {
+        color: red;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+
+      {% if error %}
+      <p class="error-msg">{{ error }}</p>
+      {% endif %}
+
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Username</label>
+          <input name="username" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input
+            type="password"
+            name="password"
+            class="form-control"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-custom">Login</button>
+      </form>
+
+      <p class="small-text">
+        Don’t have an account?
+        <a href="{{ url_for('register') }}">Register</a>
+      </p>
+    </div>
+  </body>
+</html>
